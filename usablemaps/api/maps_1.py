@@ -2,7 +2,13 @@ import requests
 
 
 def map_zoom(dates_coords, dates_move):
-    dates = [dates_move, dates_move]
+    # клик произошёл PgUp
+    # нужно прибавить определённое значение
+    zoom_map = 0.05
+    # На экваторе длина градуса широты и долготы в метрах совпадают, и примерно равны
+    # 111 километрам (длина экватора примерно 40000 км, поделить на 360 градусов)
+    # if PgUp прибавляем:
+    dates = [dates_move + zoom_map / 111, dates_move]
     params = {
         'll': ','.join(dates_coords),
         'spn': ','.join(dates),
