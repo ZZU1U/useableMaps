@@ -15,10 +15,24 @@ class MyWidget(QMainWindow):
 
 #############БИНДЫ#ДЛЯ#КЛАВИШ###########
     def keyPressEvent(self):
+        #Приближение/Отдаление
+        if event.key() == Qt.Key_PgUp:
+            pass
+
+        if event.key() == Qt.Key_PgDown:
+            pass
+
+        #Перемещение на стрелочки
         if event.key() == Qt.Key_Up:
             pass
 
         if event.key() == Qt.Key_Down:
+            pass
+
+        if event.key() == Qt.Key_Left:
+            pass
+
+        if event.key() == Qt.Key_Right:
             pass
 
         #Для нажатий мышкой
