@@ -4,9 +4,9 @@ from PyQt5.QtWidgets import QApplication
 from gui.app import MyWidget
 from api.maps import get_map
 
-cords = list(map(int, input().split()))
+cords = list(map(int, input('Введите координаты через пробел: ').split()))
 
-scale = float(input())
+scale = float(input('Введите масштаб:'))
 
 app = QApplication(sys.argv)
 window = MyWidget()
