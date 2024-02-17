@@ -1,4 +1,4 @@
-import requests
+import requests, sys
 
 
 def map_zoom(dates_coords, dates_move):
@@ -30,6 +30,8 @@ def map_zoom(dates_coords, dates_move):
         print(map_request)
         print("Http статус:", response.status_code, "(", response.reason, ")")
         sys.exit(1)
+
     map_file_1 = "map.png"
+
     with open(map_file_1, "wb") as file:
         file.write(response.content)
