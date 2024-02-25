@@ -55,19 +55,6 @@
     <property name="frameShadow">
      <enum>QFrame::Raised</enum>
     </property>
-    <widget class="QPushButton" name="button_scheme">
-     <property name="geometry">
-      <rect>
-       <x>0</x>
-       <y>0</y>
-       <width>71</width>
-       <height>61</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>PushButton</string>
-     </property>
-    </widget>
    </widget>
    <widget class="QSplitter" name="splitter">
     <property name="geometry">
@@ -103,32 +90,6 @@
       <width>551</width>
       <height>16</height>
      </rect>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="button_sputnik">
-    <property name="geometry">
-     <rect>
-      <x>80</x>
-      <y>510</y>
-      <width>71</width>
-      <height>61</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>PushButton</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="button_hybrid">
-    <property name="geometry">
-     <rect>
-      <x>150</x>
-      <y>510</y>
-      <width>71</width>
-      <height>61</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>PushButton</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="LE_Coordinates2">
