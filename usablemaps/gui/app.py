@@ -16,6 +16,9 @@ class MyWidget(QMainWindow):
         self.mapView.installEventFilter(self)
         self.mapView.setMinimumSize(1, 1)
         self.showButton.clicked.connect(self.do_map)
+        self.scale = -1
+        self.cord_x = -1
+        self.cord_y = -1
 
     # https://stackoverflow.com/questions/43569167/pyqt5-resize-label-to-fill-the-whole-window
     def eventFilter(self, source, event):
@@ -28,14 +31,16 @@ class MyWidget(QMainWindow):
 
     #############БИНДЫ#ДЛЯ#КЛАВИШ###########
     def keyPressEvent(self, event):
-        #Приближение/Отдаление
+        # Приближение/Отдаление
         if event.key() == Qt.Key_PageUp:
-            pass
+            self.scale = min(self.scale + 1, 20)
+            self.do_map()
 
         if event.key() == Qt.Key_PageDown:
-            pass
+            self.scale = max(self.scale - 1, 1)
+            self.do_map()
 
-        #Перемещение на стрелочки
+        # Перемещение на стрелочки
         if event.key() == Qt.Key_Up:
             pass
 
@@ -48,26 +53,27 @@ class MyWidget(QMainWindow):
         if event.key() == Qt.Key_Right:
             pass
 
-        #Для нажатий мышкой
-        #if event.buttons() == Qt.LeftButton:
+        # Для нажатий мышкой
+        # if event.buttons() == Qt.LeftButton:
         #    x = event.pos().x()
         #    y = event.pos().y()
 
-    def do_map(self):
-        try:
-            cord_x = float(self.LE_Coordinates1.text())
-            cord_y = float(self.LE_Coordinates2.text())
-            scale = int(self.LE_Scale.text())
+    def do_map(self, changes=None):
+        if changes is not None:
+            try:
+                self.cord_x = float(self.LE_Coordinates1.text())
+                self.cord_y = float(self.LE_Coordinates2.text())
+                self.scale = int(self.LE_Scale.text())
 
-            if scale < 1 or scale > 20:
-                raise ValueError
+                if self.scale < 1 or self.scale > 20:
+                    raise ValueError
 
-        except ValueError:
-            self.mapView.setText('Неправильный ввод')
-            return
+            except ValueError:
+                self.mapView.setText('Неправильный ввод')
+                return
 
         with tempfile.NamedTemporaryFile() as file:
-            cont = get_map((cord_x, cord_y), scale)
+            cont = get_map((self.cord_x, self.cord_y), self.scale)
 
             if cont:
                 file.write(cont)
@@ -77,7 +83,7 @@ class MyWidget(QMainWindow):
 
             self.ChangeMapImage(file.name)
 
-########ДЛЯ#СМЕНЫ#КАРТИНКИ#КАРТЫ########
+    ########ДЛЯ#СМЕНЫ#КАРТИНКИ#КАРТЫ########
     def ChangeMapImage(self, filename):
         self.pixmap = QPixmap(filename)
         self.mapView.setPixmap(self.pixmap.scaled(
