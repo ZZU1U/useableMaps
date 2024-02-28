@@ -15,8 +15,8 @@ class MyWidget(QMainWindow):
         self.pixmap = None
         self.mapView.installEventFilter(self)
         self.mapView.setMinimumSize(1, 1)
-        self.showButton.clicked.connect(self.do_map)
-        self.scale = -1
+        self.showButton.clicked.connect(lambda e: self.do_map())
+        self.scale = 0
         self.cord_x = -1
         self.cord_y = -1
 
@@ -32,13 +32,13 @@ class MyWidget(QMainWindow):
     #############БИНДЫ#ДЛЯ#КЛАВИШ###########
     def keyPressEvent(self, event):
         # Приближение/Отдаление
-        if event.key() == Qt.Key_PageUp:
+        if event.key() == Qt.Key_PageUp and self.scale:
             self.scale = min(self.scale + 1, 20)
-            self.do_map()
+            self.do_map(changes=True)
 
-        if event.key() == Qt.Key_PageDown:
+        if event.key() == Qt.Key_PageDown and self.scale:
             self.scale = max(self.scale - 1, 1)
-            self.do_map()
+            self.do_map(changes=True)
 
         # Перемещение на стрелочки
         if event.key() == Qt.Key_Up:
@@ -59,7 +59,7 @@ class MyWidget(QMainWindow):
         #    y = event.pos().y()
 
     def do_map(self, changes=None):
-        if changes is not None:
+        if changes is None:
             try:
                 self.cord_x = float(self.LE_Coordinates1.text())
                 self.cord_y = float(self.LE_Coordinates2.text())
@@ -71,6 +71,8 @@ class MyWidget(QMainWindow):
             except ValueError:
                 self.mapView.setText('Неправильный ввод')
                 return
+        else:
+            pass
 
         with tempfile.NamedTemporaryFile() as file:
             cont = get_map((self.cord_x, self.cord_y), self.scale)
