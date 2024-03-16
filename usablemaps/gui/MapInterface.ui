@@ -74,10 +74,13 @@
              <string/>
             </property>
             <property name="text">
-             <string>Широта</string>
+             <string/>
             </property>
             <property name="cursorPosition">
-             <number>6</number>
+             <number>0</number>
+            </property>
+            <property name="placeholderText">
+             <string>Широта</string>
             </property>
            </widget>
           </item>
@@ -87,10 +90,13 @@
              <string/>
             </property>
             <property name="text">
-             <string>Долгота</string>
+             <string/>
             </property>
             <property name="cursorPosition">
-             <number>7</number>
+             <number>0</number>
+            </property>
+            <property name="placeholderText">
+             <string>Долгота</string>
             </property>
            </widget>
           </item>
@@ -100,10 +106,13 @@
              <string/>
             </property>
             <property name="text">
-             <string>Приближение [1, 20]</string>
+             <string/>
             </property>
             <property name="cursorPosition">
-             <number>19</number>
+             <number>0</number>
+            </property>
+            <property name="placeholderText">
+             <string>Приближение [1, 20]</string>
             </property>
            </widget>
           </item>

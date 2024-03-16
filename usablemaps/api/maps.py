@@ -1,4 +1,5 @@
 import requests
+import logging
 
 
 def get_map(dates_coords, zoom):
@@ -11,8 +12,8 @@ def get_map(dates_coords, zoom):
     response = requests.get('https://static-maps.yandex.ru/1.x', params=params)
 
     if not response:
-        print(response.url)
-        print(response.status_code)
+        logging.error(response.url)
+        logging.error(response.status_code)
         return None
 
     return response.content

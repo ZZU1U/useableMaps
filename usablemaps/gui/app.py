@@ -1,3 +1,4 @@
+import logging
 import PyQt5
 import tempfile
 from api.maps import get_map
@@ -15,6 +16,7 @@ class MyWidget(QMainWindow):
         self.pixmap = None
         self.mapView.installEventFilter(self)
         self.mapView.setMinimumSize(1, 1)
+        self.mapView.setFocusPolicy(Qt.NoFocus)
         self.showButton.clicked.connect(lambda e: self.do_map())
         self.scale = 0
         self.cord_x = -1
@@ -41,22 +43,22 @@ class MyWidget(QMainWindow):
             self.do_map(changes=True)
 
         # Перемещение на стрелочки
-        if event.key() == Qt.Key_Up:
-            pass
+        if event.key() == Qt.Key_W:
+            self.cord_y = min(self.cord_y + 1, 80)
+            self.do_map(changes=True)
 
-        if event.key() == Qt.Key_Down:
-            pass
+        if event.key() == Qt.Key_S:
+            self.cord_y = max(self.cord_y - 1, -80)
+            self.do_map(changes=True)
 
-        if event.key() == Qt.Key_Left:
-            pass
+        if event.key() == Qt.Key_D:
+            self.cord_x = min(self.cord_x + 1, 180)
+            self.do_map(changes=True)
 
-        if event.key() == Qt.Key_Right:
-            pass
+        if event.key() == Qt.Key_A:
+            self.cord_x = max(self.cord_x - 1, -180)
+            self.do_map(changes=True)
 
-        # Для нажатий мышкой
-        # if event.buttons() == Qt.LeftButton:
-        #    x = event.pos().x()
-        #    y = event.pos().y()
 
     def do_map(self, changes=None):
         if changes is None:
@@ -68,11 +70,25 @@ class MyWidget(QMainWindow):
                 if self.scale < 1 or self.scale > 20:
                     raise ValueError
 
+                if abs(self.cord_x) > 180:
+                    raise ValueError
+
+                if abs(self.cord_y) > 80:
+                    raise ValueError
+
             except ValueError:
                 self.mapView.setText('Неправильный ввод')
                 return
         else:
-            pass
+            if self.cord_x:
+                self.LE_Coordinates1.setText(str(self.cord_x))
+                #self.LE_Coordinates1.setText('')
+            if self.cord_y:
+                self.LE_Coordinates2.setText(str(self.cord_y))
+                #self.LE_Coordinates2.setText('')
+            if self.scale:
+                self.LE_Scale.setText(str(self.scale))
+                self.LE_Scale.setText('')
 
         with tempfile.NamedTemporaryFile() as file:
             cont = get_map((self.cord_x, self.cord_y), self.scale)
@@ -84,6 +100,8 @@ class MyWidget(QMainWindow):
                 return
 
             self.ChangeMapImage(file.name)
+
+        logging.debug('Done!')
 
     ########ДЛЯ#СМЕНЫ#КАРТИНКИ#КАРТЫ########
     def ChangeMapImage(self, filename):
