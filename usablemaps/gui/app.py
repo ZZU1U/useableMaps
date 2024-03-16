@@ -1,3 +1,4 @@
+import logging
 import PyQt5
 import tempfile
 from api.maps import get_map
@@ -15,7 +16,11 @@ class MyWidget(QMainWindow):
         self.pixmap = None
         self.mapView.installEventFilter(self)
         self.mapView.setMinimumSize(1, 1)
-        self.showButton.clicked.connect(self.do_map)
+        self.mapView.setFocusPolicy(Qt.NoFocus)
+        self.showButton.clicked.connect(lambda e: self.do_map())
+        self.scale = 0
+        self.cord_x = -1
+        self.cord_y = -1
 
     # https://stackoverflow.com/questions/43569167/pyqt5-resize-label-to-fill-the-whole-window
     def eventFilter(self, source, event):
@@ -28,46 +33,65 @@ class MyWidget(QMainWindow):
 
     #############БИНДЫ#ДЛЯ#КЛАВИШ###########
     def keyPressEvent(self, event):
-        #Приближение/Отдаление
-        if event.key() == Qt.Key_PageUp:
-            pass
+        # Приближение/Отдаление
+        if event.key() == Qt.Key_PageUp and self.scale:
+            self.scale = min(self.scale + 1, 20)
+            self.do_map(changes=True)
 
-        if event.key() == Qt.Key_PageDown:
-            pass
+        if event.key() == Qt.Key_PageDown and self.scale:
+            self.scale = max(self.scale - 1, 1)
+            self.do_map(changes=True)
 
-        #Перемещение на стрелочки
-        if event.key() == Qt.Key_Up:
-            pass
+        # Перемещение на стрелочки
+        if event.key() == Qt.Key_W:
+            self.cord_y = min(self.cord_y + 1, 80)
+            self.do_map(changes=True)
 
-        if event.key() == Qt.Key_Down:
-            pass
+        if event.key() == Qt.Key_S:
+            self.cord_y = max(self.cord_y - 1, -80)
+            self.do_map(changes=True)
 
-        if event.key() == Qt.Key_Left:
-            pass
+        if event.key() == Qt.Key_D:
+            self.cord_x = min(self.cord_x + 1, 180)
+            self.do_map(changes=True)
 
-        if event.key() == Qt.Key_Right:
-            pass
+        if event.key() == Qt.Key_A:
+            self.cord_x = max(self.cord_x - 1, -180)
+            self.do_map(changes=True)
 
-        #Для нажатий мышкой
-        #if event.buttons() == Qt.LeftButton:
-        #    x = event.pos().x()
-        #    y = event.pos().y()
 
-    def do_map(self):
-        try:
-            cord_x = float(self.LE_Coordinates1.text())
-            cord_y = float(self.LE_Coordinates2.text())
-            scale = int(self.LE_Scale.text())
+    def do_map(self, changes=None):
+        if changes is None:
+            try:
+                self.cord_x = float(self.LE_Coordinates1.text())
+                self.cord_y = float(self.LE_Coordinates2.text())
+                self.scale = int(self.LE_Scale.text())
 
-            if scale < 1 or scale > 20:
-                raise ValueError
+                if self.scale < 1 or self.scale > 20:
+                    raise ValueError
 
-        except ValueError:
-            self.mapView.setText('Неправильный ввод')
-            return
+                if abs(self.cord_x) > 180:
+                    raise ValueError
+
+                if abs(self.cord_y) > 80:
+                    raise ValueError
+
+            except ValueError:
+                self.mapView.setText('Неправильный ввод')
+                return
+        else:
+            if self.cord_x:
+                self.LE_Coordinates1.setText(str(self.cord_x))
+                #self.LE_Coordinates1.setText('')
+            if self.cord_y:
+                self.LE_Coordinates2.setText(str(self.cord_y))
+                #self.LE_Coordinates2.setText('')
+            if self.scale:
+                self.LE_Scale.setText(str(self.scale))
+                self.LE_Scale.setText('')
 
         with tempfile.NamedTemporaryFile() as file:
-            cont = get_map((cord_x, cord_y), scale)
+            cont = get_map((self.cord_x, self.cord_y), self.scale)
 
             if cont:
                 file.write(cont)
@@ -77,7 +101,9 @@ class MyWidget(QMainWindow):
 
             self.ChangeMapImage(file.name)
 
-########ДЛЯ#СМЕНЫ#КАРТИНКИ#КАРТЫ########
+        logging.debug('Done!')
+
+    ########ДЛЯ#СМЕНЫ#КАРТИНКИ#КАРТЫ########
     def ChangeMapImage(self, filename):
         self.pixmap = QPixmap(filename)
         self.mapView.setPixmap(self.pixmap.scaled(
